@@ -192,9 +192,9 @@ const roundLen=()=>ROUND?Math.min(ROUND,poolSize()):poolSize();
 $("chs").onclick=e=>{const b=e.target.closest(".chip"); if(!b)return; CHOICES=+b.dataset.c;
   document.querySelectorAll("#chs .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); showBest()};
 const bestKey=()=>`cap-best-${zone}-${dir}-${ROUND||"all"}`+(CHOICES>4?`-c${CHOICES}`:"");
-function intro(){return `${roundLen()} questions, 10 secondes chacune`}
+function intro(){return `${roundLen()} questions, façile`}
 function showBest(){const b=store.get(bestKey()); $("ask").textContent=intro();
-  $("best").textContent=b?`Record ${zone} (${ROUND||"toutes"}) : ${b} pts`:"Plus tu réponds vite, plus tu marques."}
+  $("best").textContent=b?`Record ${zone} (${ROUND||"toutes"}) : ${b} pts`:"Plus vite, plus de points"}
 
 function start(){
   const pool=zone==="Monde"?ALL:ALL.filter(x=>x.z===zone);
