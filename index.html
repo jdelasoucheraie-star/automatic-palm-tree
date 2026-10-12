@@ -74,6 +74,8 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .misses{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
 .misses li{display:flex;justify-content:space-between;gap:12px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:17px}
 .misses li span:last-child{color:var(--lime);font-weight:600;text-align:right}
+.gif{border-radius:12px;overflow:hidden}
+.gif iframe{display:block;width:100%;border:0}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .bigflag{font-size:84px;line-height:1.05;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 .gate .fl{font-size:42px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
@@ -119,8 +121,6 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
     <div class="label">Réponses proposées</div>
     <div class="chips" id="chs">
       <button class="chip" id="c4" aria-pressed="true" data-c="4">4</button>
-      <button class="chip" id="c5" aria-pressed="false" data-c="5">5</button>
-      <button class="chip" id="c6" aria-pressed="false" data-c="6">6</button>
       <button class="chip" id="c7" aria-pressed="false" data-c="7">7</button>
     </div>
     <button class="go" id="start">Jouer</button>
@@ -134,6 +134,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
   <!-- Fin -->
   <div id="end" class="setup" hidden>
     <div class="result"><div class="big" id="final">0</div><small id="finalSub"></small></div>
+    <div class="gif" id="gif" hidden></div>
     <div class="label" id="missLbl">À revoir</div>
     <ul class="misses" id="misses"></ul>
     <div class="btns"><button class="go" id="again">Rejouer</button><button class="go alt" id="menu">Changer de zone</button></div>
@@ -161,6 +162,27 @@ const ALL=Object.entries(D).flatMap(([z,l])=>l.map(([c,k],j)=>({c,k,z,f:flagOf(C
 const isFlag=()=>dir==="fp"||dir==="pf";
 const reveal=q=>isFlag()?`${q.f}  ${q.c} · ${q.k}`:`${q.c} → ${q.k}`;
 let ROUND=10, CHOICES=4; const TIME=10000;
+// GIF de fin selon le % de bonnes réponses (min/max = paliers en %)
+const GIFS=[
+  {min:100, id:"11286910", ratio:1.86806, alt:"C'est beau — sans faute"},
+  {min:80,  id:"4771894558253473942", ratio:0.566265, alt:"Félicitations — très bien"},
+  {min:50,  img:"moyen.jpg", ratio:480/284, alt:"Visages neutres — moyen", max:79},
+  {min:20,  id:"1827393238336712009", ratio:2.41748, alt:"OSS 117 — pas terrible", max:49},
+  {min:0,   id:"15547352725341800501", ratio:0.7751, alt:"Flashback — catastrophe", max:19},
+];
+function showGif(pct){
+  const box=$("gif"), g=GIFS.find(x=>pct>=x.min&&(x.max===undefined||pct<=x.max));
+  box.innerHTML=""; box.hidden=true;
+  if(!g) return;
+  if(g.img){ const im=document.createElement("img"); im.src=g.img; im.alt=g.alt;
+    im.style.cssText="display:block;width:100%;height:auto"; box.appendChild(im); box.hidden=false; return; }
+  if(!navigator.onLine) return;
+  const f=document.createElement("iframe");
+  f.src=`https://tenor.com/embed/${g.id}`; f.title=g.alt; f.loading="lazy";
+  f.style.aspectRatio=String(g.ratio); f.allow="autoplay";
+  f.style.width=`min(100%, ${Math.round(45*g.ratio)}vh)`; f.style.margin="0 auto";
+  box.appendChild(f); box.hidden=false;
+}
 let zone="Monde", dir="pc", qs=[], i=0, pts=0, streak=0, bestStreak=0, good=0, misses=[], t0=0, raf=0, locked=false;
 const $=id=>document.getElementById(id);
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -192,7 +214,7 @@ const roundLen=()=>ROUND?Math.min(ROUND,poolSize()):poolSize();
 $("chs").onclick=e=>{const b=e.target.closest(".chip"); if(!b)return; CHOICES=+b.dataset.c;
   document.querySelectorAll("#chs .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); showBest()};
 const bestKey=()=>`cap-best-${zone}-${dir}-${ROUND||"all"}`+(CHOICES>4?`-c${CHOICES}`:"");
-function intro(){return `${roundLen()} questions, façile`}
+function intro(){return `${roundLen()} questions, facile`}
 function showBest(){const b=store.get(bestKey()); $("ask").textContent=intro();
   $("best").textContent=b?`Record ${zone} (${ROUND||"toutes"}) : ${b} pts`:"Plus vite, plus de points"}
 
@@ -256,7 +278,7 @@ function finish(){
   $("game").hidden=true;$("feedback").hidden=true;$("end").hidden=false;
   $("bar").style.transform="scaleX(0)";
   const prev=+store.get(bestKey())||0, rec=pts>prev; if(rec)store.set(bestKey(),pts);
-  const r=good/qs.length;
+  const r=good/qs.length; showGif(Math.round(r*100));
   flap(rec?"Record":r>=.8?"Bah bravo ecoute je sais pas trop quoi te dire":r>=.5?"Au moins t'as essayé":"Claqué au sol");
   $("ask").textContent=`${good}/${qs.length} bonnes réponses`;
   $("final").textContent=pts;
