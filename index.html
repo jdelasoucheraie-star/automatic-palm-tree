@@ -14,12 +14,14 @@
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;-webkit-tap-highlight-color:transparent}[hidden]{display:none!important}*{box-sizing:border-box}</style>
 <title>Capitales du monde</title>
 <style>
+/* Drapeaux en couleur sur tous les appareils (police Twemoji Country Flags, CC-BY 4.0) */
+@font-face{font-family:"Twemoji Country Flags";src:url(flags.woff2) format("woff2");unicode-range:U+1F1E6-1F1FF,U+1F3F4,U+E0062-E0063,U+E0065,U+E0067,U+E006C,U+E006E,U+E0073-E0074,U+E0077,U+E007F;font-display:swap}
 /* Layout : une colonne de cartes sombres translucides, posée devant une Terre dessinée dans l'espace */
 :root{
   --space:#0b1d26; --card:rgba(12,34,45,.84); --card-2:rgba(20,52,68,.9); --line:rgba(140,200,230,.22);
   --blue:#3d9be6; --lime:#a6e22e; --lime-2:#7cc317; --fg:#f2f8fb; --muted:#9fbccb;
   --ok:#a6e22e; --ko:#ff6b5e;
-  --ui:system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --ui:"Twemoji Country Flags", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --num:ui-monospace, Menlo, Consolas, monospace;
   color-scheme:dark;
 }
@@ -42,7 +44,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .timer i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--lime),var(--blue));transform-origin:left}
 
 .gates{display:grid;grid-template-columns:1fr;gap:10px}
-.gate{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--card);color:var(--fg);border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;font:600 20px/1.2 var(--ui);cursor:pointer}
+.gate{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;text-align:center;background:var(--card);color:var(--fg);border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;font:600 20px/1.2 var(--ui);cursor:pointer}
 .gate:hover:not(:disabled){border-color:var(--blue)}
 .gate:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
 .gate .tag{flex:none;width:30px;height:30px;display:grid;place-items:center;font:700 14px var(--ui);color:var(--space);background:var(--blue);border-radius:50%}
@@ -77,8 +79,8 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
 .gif{border-radius:12px;overflow:hidden}
 .gif iframe{display:block;width:100%;border:0}
 .btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.bigflag{font-size:84px;line-height:1.05;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
-.gate .fl{font-size:42px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.bigflag{font-size:84px;line-height:1.05;font-family:"Twemoji Country Flags","Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.gate .fl{font-size:42px;line-height:1;font-family:"Twemoji Country Flags","Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
 .toast{text-align:center;font-size:14px;font-weight:600;color:var(--lime);min-height:18px}
 #feedback{background:var(--card);border-radius:10px;padding:6px}
 #feedback:empty{visibility:hidden}
@@ -242,7 +244,7 @@ function next(){
   opts.forEach((o,idx)=>{
     const b=document.createElement("button");
     b.className="gate"; b.id="g"+idx; b.dataset.ok=o===q?"1":"";
-    b.innerHTML=`<span class="tag">${"ABCDEFG"[idx]}</span><span></span>`;
+    b.innerHTML=`<span></span>`;
     b.lastChild.textContent=o[pick];
     if(pick==="f") b.lastChild.className="fl";
     b.onclick=()=>answer(b);
