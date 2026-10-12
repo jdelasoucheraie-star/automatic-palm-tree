@@ -257,12 +257,12 @@ function finish(){
   $("bar").style.transform="scaleX(0)";
   const prev=+store.get(bestKey())||0, rec=pts>prev; if(rec)store.set(bestKey(),pts);
   const r=good/qs.length;
-  flap(rec?"Record":r>=.8?"Bravo":r>=.5?"Pas mal":"A revoir");
+  flap(rec?"Record":r>=.8?"Bah bravo ecoute je sais pas trop quoi te dire":r>=.5?"Au moins t'as essayé":"Claqué au sol");
   $("ask").textContent=`${good}/${qs.length} bonnes réponses`;
   $("final").textContent=pts;
-  $("finalSub").textContent=`Meilleure série : ${bestStreak} · Record ${zone} : ${Math.max(prev,pts)}`;
+  $("finalSub").textContent=`Best streak : ${bestStreak} · Record ${zone} : ${Math.max(prev,pts)}`;
   const ul=$("misses"); ul.innerHTML="";
-  $("missLbl").textContent=misses.length?"À revoir":"Sans faute";
+  $("missLbl").textContent=misses.length?"Tu fera gaffe t'a oublié ça":"Nice";
   misses.forEach(m=>{const li=document.createElement("li");li.innerHTML="<span></span><span></span>";li.firstChild.textContent=`${m.f}  ${m.c}`;li.lastChild.textContent=m.k;ul.appendChild(li)});
 }
 $("start").onclick=start; $("again").onclick=start;
