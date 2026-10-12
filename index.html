@@ -97,7 +97,7 @@ header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
   <div id="home" class="setup">
     <div class="label">Zone</div>
     <div class="chips" id="zones"></div>
-    <div class="label">Sens</div>
+    <div class="label">Mode</div>
     <div class="chips" id="dirs">
       <button class="chip" id="d1" aria-pressed="true" data-d="pc">Pays → capitale</button>
       <button class="chip" id="d2" aria-pressed="false" data-d="cp">Capitale → pays</button>
@@ -171,15 +171,16 @@ function chips(){
   });
 }
 $("dirs").onclick=e=>{const b=e.target.closest(".chip"); if(!b)return; dir=b.dataset.d;
-  document.querySelectorAll("#dirs .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); showBest()};
+  document.querySelectorAll("#dirs .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); showBest(); homeTitle()};
+function homeTitle(){flap(isFlag()?"Drapeaux":"Capitales")}
 $("lens").onclick=e=>{const b=e.target.closest(".chip"); if(!b)return; ROUND=+b.dataset.n;
   document.querySelectorAll("#lens .chip").forEach(c=>c.setAttribute("aria-pressed",c===b)); showBest()};
 const poolSize=()=>zone==="Monde"?ALL.length:D[zone].length;
 const roundLen=()=>ROUND?Math.min(ROUND,poolSize()):poolSize();
 const bestKey=()=>`cap-best-${zone}-${dir}-${ROUND||"all"}`;
-function intro(){return `${roundLen()} questions, c'est façile`}
+function intro(){return `${roundLen()} questions, 10 secondes chacune`}
 function showBest(){const b=store.get(bestKey()); $("ask").textContent=intro();
-  $("best").textContent=b?`Record ${zone} (${ROUND||"toutes"}) : ${b} pts`:"Plus vite, plus de points."}
+  $("best").textContent=b?`Record ${zone} (${ROUND||"toutes"}) : ${b} pts`:"Plus tu réponds vite, plus tu marques."}
 
 function start(){
   const pool=zone==="Monde"?ALL:ALL.filter(x=>x.z===zone);
@@ -249,10 +250,10 @@ function finish(){
   misses.forEach(m=>{const li=document.createElement("li");li.innerHTML="<span></span><span></span>";li.firstChild.textContent=`${m.f}  ${m.c}`;li.lastChild.textContent=m.k;ul.appendChild(li)});
 }
 $("start").onclick=start; $("again").onclick=start;
-$("menu").onclick=()=>{$("end").hidden=true;$("home").hidden=false;flap("Capitales");$("qn").textContent="–";showBest()};
+$("menu").onclick=()=>{$("end").hidden=true;$("home").hidden=false;homeTitle();$("qn").textContent="–";showBest()};
 
 chips(); showBest();
-flap("Capitales");
+homeTitle();
 </script>
 <script>if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));</script>
 <script>
